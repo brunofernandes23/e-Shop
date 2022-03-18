@@ -31,7 +31,7 @@ router.post("/", async(req, res) => {
     category = await category.save();
 
     if (!category)
-        return res.status(404).send("A categoria não pode ser criada!");
+        return res.status(400).send("A categoria não pode ser criada!");
 
     res.send(category);
 });
@@ -40,7 +40,7 @@ router.put("/:id", async(req, res) => {
     const category = await Category.findByIdAndUpdate(
         req.params.id, {
             name: req.body.name,
-            icon: req.body.icon,
+            icon: req.body.icon || category.icon,
             color: req.body.color,
         }, {
             new: true,
@@ -53,7 +53,7 @@ router.put("/:id", async(req, res) => {
     res.send(category);
 });
 
-router.delete("/:id", async(req, res) => {
+router.delete("/:id", (req, res) => {
     Category.findByIdAndRemove(req.params.id)
         .then((category) => {
             if (category) {
@@ -69,7 +69,7 @@ router.delete("/:id", async(req, res) => {
             }
         })
         .catch((err) => {
-            return res.status(400).json({ sucess: false, error: err });
+            return res.status(500).json({ sucess: false, error: err });
         });
 });
 
