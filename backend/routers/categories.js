@@ -8,7 +8,18 @@ router.get(`/`, async(req, res) => {
     if (!categoryList) {
         res.status(500).json({ success: false });
     }
-    res.send(categoryList);
+    res.status(200).send(categoryList);
+});
+
+router.get("/:id", async(req, res) => {
+    const category = await Category.findById(req.params.id);
+
+    if (!category) {
+        res.status(500).json({
+            message: "A categoria com o ID fornecido, não foi encontrada",
+        });
+    }
+    res.status(200).send(category);
 });
 
 router.post("/", async(req, res) => {
@@ -29,19 +40,15 @@ router.delete("/:id", async(req, res) => {
     Category.findByIdAndRemove(req.params.id)
         .then((category) => {
             if (category) {
-                return res
-                    .status(200)
-                    .json({
-                        sucess: true,
-                        message: "A categoria foi deletada",
-                    });
+                return res.status(200).json({
+                    sucess: true,
+                    message: "A categoria foi deletada",
+                });
             } else {
-                return res
-                    .status(404)
-                    .json({
-                        sucess: false,
-                        message: "A categoria não foi encontrada!",
-                    });
+                return res.status(404).json({
+                    sucess: false,
+                    message: "A categoria não foi encontrada!",
+                });
             }
         })
         .catch((err) => {
